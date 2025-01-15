@@ -9,3 +9,6 @@ backend/build/
 # Ignore environment variables
 .env
 
+# Ignore uploads
+uploads/
+
