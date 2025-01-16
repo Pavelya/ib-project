@@ -26,7 +26,7 @@ const Form = ({ selectedField, selectedLocation, goBack }) => {
     setSubjectScores(updatedScores);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate overall score
     const overall = parseInt(overallScore, 10);
     if (isNaN(overall) || overall < 0 || overall > 45) {
@@ -54,20 +54,42 @@ const Form = ({ selectedField, selectedLocation, goBack }) => {
       (entry) => entry.subject.trim() === "" || isNaN(parseInt(entry.score, 10))
     );
     if (invalidScores) {
-      alert("Please ensure all subject names and scores (1–7) are filled out correctly.");
+      alert(
+        "Please ensure all subject names and scores (1–7) are filled out correctly."
+      );
       return;
     }
 
-    // If all validations pass, process the data
-    console.log({
+    // Prepare the payload
+    const payload = {
+      fieldOfStudy: selectedField,
+      location: selectedLocation,
       overallScore,
       subjectScores,
       tokScore,
       eeScore,
-      selectedField,
-      selectedLocation,
-    });
-    alert("Form submitted successfully!");
+    };
+
+    try {
+      // Send data to the backend
+      const response = await fetch("http://localhost:5008/api/grades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit data");
+      }
+
+      const data = await response.json();
+      alert(data.message || "Form submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Please try again.");
+    }
   };
 
   return (

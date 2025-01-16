@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const db = require("../db/database");
 
+
 // Configure Multer for file uploads
 const upload = multer({ dest: "uploads/" });
 
