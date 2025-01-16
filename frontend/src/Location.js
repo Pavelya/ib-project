@@ -1,63 +1,36 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Location.css";
 
-const Location = ({ goToNext }) => {
-  const [location, setLocation] = useState("");
-
+const Location = ({
+  selectedLocation,
+  setSelectedLocation,
+  goToNextStep,
+  goToPreviousStep,
+}) => {
   const locations = [
     "United States",
     "Canada",
     "United Kingdom",
-    "Netherlands",
-    "Australia",
-    "Singapore",
-    "Hong Kong",
-    "India",
-    "South Korea",
-    "Japan",
-    "Spain",
     "Germany",
+    "Australia",
     "New Zealand",
-    "Italy",
-    "Norway",
-    "Denmark",
-    "Switzerland",
-    "Finland",
-    "Ireland",
-    "Egypt",
-    "United Arab Emirates",
-    "France",
-    "Poland",
-    "Belgium",
-    "Lebanon",
-    "Austria",
-    "South Africa",
+    "Israel",
   ];
 
-  const handleLocationSelect = (selectedLocation) => {
-    setLocation(selectedLocation);
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!location) {
-      alert("Please select a location");
-      return;
+  const handleNextClick = () => {
+    if (selectedLocation) {
+      goToNextStep();
+    } else {
+      alert("Please select a location.");
     }
-    goToNext();
   };
 
   return (
     <div className="location-container">
-      {/* Logout Button */}
-      <button
-        className="logout-button"
-        onClick={() => window.location.reload()} // Example of logout handler
-      >
-        Logout
-      </button>
-
-      {/* Progress Bar */}
       <div className="progress-bar">
         <span>Step 2/3</span>
         <div className="progress-bar-indicator">
@@ -66,35 +39,25 @@ const Location = ({ goToNext }) => {
           <div className="progress-step"></div>
         </div>
       </div>
-
-      {/* Heading */}
       <h1 className="heading">Where do you prefer to study?</h1>
-
-      {/* Location Options */}
       <div className="locations-cloud">
-        {locations.map((item, index) => (
+        {locations.map((location, index) => (
           <button
             key={index}
-            className={`location-tag ${location === item ? "selected" : ""}`}
-            onClick={() => handleLocationSelect(item)}
+            className={`location-tag ${
+              selectedLocation === location ? "selected" : ""
+            }`}
+            onClick={() => handleLocationSelect(location)}
           >
-            {item}
+            {location}
           </button>
         ))}
       </div>
-
-      {/* Action Buttons */}
       <div className="actions">
-        <button
-          className="action-button"
-          onClick={() => window.location.reload()}
-        >
-          Start Over
+        <button className="back-button" onClick={goToPreviousStep}>
+          Back to Fields
         </button>
-        <button
-          className={`action-button next ${location ? "enabled" : "disabled"}`}
-          onClick={handleSubmit}
-        >
+        <button className="next-button" onClick={handleNextClick}>
           Next
         </button>
       </div>

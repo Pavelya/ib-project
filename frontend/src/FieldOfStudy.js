@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import "./FieldOfStudy.css";
 
-const FieldOfStudy = ({ goToNext }) => {
-  const [field, setField] = useState("");
-
+const FieldOfStudy = ({ selectedField, setSelectedField, goToNextStep }) => {
   const fields = [
     "Arts and Humanities",
     "Business and Management",
@@ -14,30 +12,20 @@ const FieldOfStudy = ({ goToNext }) => {
     "Mathematics and Statistics",
   ];
 
-  const handleFieldSelect = (selectedField) => {
-    setField(selectedField);
+  const handleFieldSelect = (field) => {
+    setSelectedField(field);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!field) {
-      alert("Please select a field of study");
-      return;
+  const handleNextClick = () => {
+    if (selectedField) {
+      goToNextStep();
+    } else {
+      alert("Please select a field of study.");
     }
-    goToNext();
   };
 
   return (
     <div className="field-of-study-container">
-      {/* Logout Button */}
-      <button
-        className="logout-button"
-        onClick={() => window.location.reload()} // Example of logout handler
-      >
-        Logout
-      </button>
-
-      {/* Progress Bar */}
       <div className="progress-bar">
         <span>Step 1/3</span>
         <div className="progress-bar-indicator">
@@ -46,36 +34,22 @@ const FieldOfStudy = ({ goToNext }) => {
           <div className="progress-step"></div>
         </div>
       </div>
-
-      {/* Heading */}
       <h1 className="heading">What are your preferred fields of study?</h1>
-
-      {/* Field of Study Options */}
       <div className="fields-grid">
-        {fields.map((item, index) => (
+        {fields.map((field, index) => (
           <button
             key={index}
-            className={`field-button ${field === item ? "selected" : ""}`}
-            onClick={() => handleFieldSelect(item)}
+            className={`field-button ${
+              selectedField === field ? "selected" : ""
+            }`}
+            onClick={() => handleFieldSelect(field)}
           >
-            <span className="field-icon">🎓</span>
-            {item}
+            {field}
           </button>
         ))}
       </div>
-
-      {/* Action Buttons */}
       <div className="actions">
-        <button
-          className="action-button"
-          onClick={() => window.location.reload()}
-        >
-          Start Over
-        </button>
-        <button
-          className={`action-button next ${field ? "enabled" : "disabled"}`}
-          onClick={handleSubmit}
-        >
+        <button className="next-button" onClick={handleNextClick}>
           Next
         </button>
       </div>

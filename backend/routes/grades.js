@@ -1,39 +1,24 @@
-const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
+const express = require('express');
 const router = express.Router();
+const db = require('./database');
 
-// Connect to the database
-const db = new sqlite3.Database("./db/database.db");
+// API to handle grades submission
+router.post('/api/grades', async (req, res) => {
+    try {
+        const { fieldOfStudy, location, overallScore, subjectScores, tokScore, eeScore } = req.body;
 
-// API endpoint to submit grades
-router.post("/", (req, res) => {
-  const { overallScore, tokScore, eeScore, subjects } = req.body;
+        // Insert data into the database
+        await db.query(
+            `INSERT INTO user_data (field_of_study, location, overall_score, subject_scores, tok_score, ee_score) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [fieldOfStudy, location, overallScore, JSON.stringify(subjectScores), tokScore, eeScore]
+        );
 
-  // Convert subjects array to a JSON string for storage
-  const subjectsJSON = JSON.stringify(subjects);
-
-  db.run(
-    `INSERT INTO grades (overall_score, tok_score, ee_score, subjects) VALUES (?, ?, ?, ?)`,
-    [overallScore, tokScore, eeScore, subjectsJSON],
-    function (err) {
-      if (err) {
-        console.error(err.message);
-        return res.status(500).json({ error: "Failed to insert grades." });
-      }
-      res.status(201).json({ message: "Grades submitted successfully!" });
+        res.status(200).send({ message: 'Data successfully stored.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error storing data.' });
     }
-  );
-});
-
-// API endpoint to get all grades
-router.get("/", (req, res) => {
-  db.all("SELECT * FROM grades", [], (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: "Failed to retrieve grades." });
-    }
-    res.status(200).json(rows);
-  });
 });
 
 module.exports = router;
